@@ -12,7 +12,7 @@ router.get("/user-create", (req, res) => res.render("users/create"));
 // POST route to submit the form to create a user
 // ****************************************************************************************
 
-router.post("/user-create", (req, res) => {
+router.post("/user-create", (req, res, next) => {
   const { username } = req.body;
   User.findOne({ username })
     .then((userDocFromDB) => {
@@ -25,17 +25,23 @@ router.post("/user-create", (req, res) => {
         return;
       }
     })
-    .catch((err) => console.log(`Error while creating a new user: ${err}`));
+    .catch((err) => {
+      console.log(`Error while creating a new user: ${err}`);
+      next(err);
+    });
 });
 
 // ****************************************************************************************
 // GET route to display all users from the DB
 // ****************************************************************************************
 
-router.get("/users", (req, res) => {
+router.get("/users", (req, res, next) => {
   User.find() // <-- .find() method gives us always an ARRAY back
     .then((usersFromDB) => res.render("users/list", { users: usersFromDB }))
-    .catch((err) => console.log(`Error while getting users from the DB: ${err}`));
+    .catch((err) => {
+      console.log(`Error while getting users from the DB: ${err}`);
+      next(err);
+    });
 });
 
 // ****************************************************************************************
